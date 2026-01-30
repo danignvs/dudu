@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horário 4º Ano - 2026</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* -------------------------------------------------------
+           VARIÁVEIS DE CORES
+           -------------------------------------------------------
+        */
+        :root {
+            --azul-fundo-pag: #9dd8f3;
+            --azul-cabecalho-tabela: #0277bd;
+            --azul-texto: #00508d;
+            --amarelo-bg: #fff9bb;
+            --amarelo-destaque: #fff176;
+            --laranja-texto: #f57f17;
+            --branco: #ffffff;
+            --cinza-texto: #555555;
+            --sombra: rgba(0, 0, 0, 0.2);
+        }
+
+        /* Estilos Gerais */
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--azul-fundo-pag);
+            color: var(--azul-texto);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            user-select: none; 
+            -webkit-user-select: none;
+        }
+
+        /* Cabeçalho da Página */
+        header {
+            background-color: var(--amarelo-destaque);
+            padding: 20px 40px;
+            margin-bottom: 20px;
+            text-align: center;
+            width: 100%;
+        }
+
+        h1 { margin: 0; font-size: 2.5em; color: var(--azul-texto); text-transform: uppercase; line-height: 1.1; }
+        h2 { margin: 5px 0 0 0; font-size: 1.2em; color: var(--laranja-texto); }
+
+        /* Aviso de rolagem (só aparece no mobile) */
+        .aviso-mobile {
+            display: none;
+            font-size: 0.9em;
+            color: var(--azul-texto);
+            margin: 10px 0;
+            font-weight: bold;
+            opacity: 0.5;
+        }
+
+        /* Container da Tabela com Scroll */
+        .tabela-container {
+            width: 100%;
+            max-width: 1100px;
+            overflow-x: auto; /* Permite rolagem horizontal */
+            padding-bottom: 20px; /* Espaço para a sombra do hover não cortar */
+            /* Rolagem suave no iOS */
+            -webkit-overflow-scrolling: touch; 
+        }
+
+        table {
+            border-collapse: separate;
+            border-spacing: 4px;
+            background-color: transparent;
+            /* Garante que a tabela tenha um tamanho mínimo para não esmagar o conteúdo */
+            min-width: 800px; 
+            margin: 0 auto;
+        }
+
+        /* Cabeçalho da Tabela */
+        thead tr {
+            background-color: var(--azul-cabecalho-tabela);
+            color: var(--branco);
+            text-transform: uppercase;
+        }
+
+        th {
+            padding: 5px;
+            font-size: 1.1em;
+            white-space: nowrap; /* Não quebra linha no cabeçalho */
+        }
+
+        /* Células do Corpo */
+        td {
+            padding: 15px;
+            text-align: center;
+            vertical-align: middle;
+            background-color: var(--branco);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            min-width: 100px; /* Largura mínima para cada aula */
+        }
+
+        /* -------------------------------------------------------
+           COLUNA DE HORÁRIO FIXA (STICKY)
+           ------------------------------------------------------- */
+        td:first-child, th:first-child {
+            position: sticky;
+            left: 0;
+            z-index: 20; /* Fica acima das outras células ao rolar */
+        }
+
+        /* Estilo específico da coluna de horário */
+        td:first-child {
+            background-color: var(--amarelo-bg);
+            color: var(--laranja-texto);
+            font-weight: bold;
+            cursor: default;
+            min-width: 60px;
+        }
+
+        /* Correção para o cabeçalho fixo */
+        th:first-child {
+            background-color: var(--azul-cabecalho-tabela);
+            z-index: 21; /* Fica acima de tudo */
+        }
+
+        /* --- EFEITO DE HOVER --- */
+        td:not(:first-child):not(.esmaecido):hover {
+            background-color: var(--amarelo-bg);
+            z-index: 30; /* Muito alto para ficar acima da coluna fixa se necessário */
+            position: relative;
+        }
+
+        /* --- CLASSE "DESABILITADO" --- */
+        .esmaecido {
+            opacity: 0.3;
+            filter: grayscale(100%);
+            transform: scale(0.95);
+        }
+
+        /* Conteúdo da Célula */
+        .materia {
+            font-weight: bold;
+            font-size: 1.1em;
+            display: block;
+            margin-bottom: 4px;
+            color: var(--azul-texto);
+        }
+
+        .prof {
+            font-size: 0.75em;
+            text-transform: uppercase;
+            font-weight: bold;
+            background-color: var(--amarelo-bg);
+            padding: 4px 8px;
+            color: var(--cinza-texto);
+            display: inline-block;
+            white-space: nowrap; /* Evita quebra de linha no nome */
+        }
+
+        /* Intervalo */
+        .intervalo td {
+            background-color: var(--amarelo-destaque) !important;
+            color: var(--laranja-texto);
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: default;
+        }
+
+        footer {
+            margin-top: 20px;
+            font-size: 1em;
+            color: var(--azul-cabecalho-tabela);
+            text-align: center;
+        }
+
+        /* -------------------------------------------------------
+           MEDIA QUERIES (Para Celular)
+           ------------------------------------------------------- */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            
+            header {
+                padding: 15px;
+                width: 100%;
+            }
+
+            h1 { font-size: 1.8em; }
+            h2 { font-size: 1em; }
+
+            /* Mostra o aviso de arrastar */
+            .aviso-mobile { display: block; }
+
+            /* Diminui espaçamento da tabela */
+            table { border-spacing: 2px; }
+
+            /* Fontes menores na tabela */
+            th { padding: 10px; font-size: 0.9em; }
+            td { padding: 10px 5px; }
+
+            .materia { font-size: 0.95em; }
+            .prof { font-size: 0.65em; padding: 2px 5px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Horário Escolar</h1>
+        <h2>Colégio Integrar | 4º Ano | 2026</h2>
+    </header>
+
+    <div class="tabela-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Horário</th>
+                    <th>Segunda</th>
+                    <th>Terça</th>
+                    <th>Quarta</th>
+                    <th>Quinta</th>
+                    <th>Sexta</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>13:00</td>
+                    <td><span class="materia">Ed. Física</span><span class="prof">Rafael Bueno</span></td>
+                    <td><span class="materia">História</span><span class="prof">Tayna</span></td>
+                    <td><span class="materia">Socioemocional</span><span class="prof">Tayna</span></td>
+                    <td><span class="materia">Matemática</span><span class="prof">Thainã</span></td>
+                    <td><span class="materia">Ed. Física</span><span class="prof">Rafael Bueno</span></td>
+                </tr>
+                <tr>
+                    <td>13:50</td>
+                    <td><span class="materia">Ciências</span><span class="prof">Thainã</span></td>
+                    <td><span class="materia">História</span><span class="prof">Tayna</span></td>
+                    <td><span class="materia">Geografia</span><span class="prof">Tayna</span></td>
+                    <td><span class="materia">Ed. Financeira</span><span class="prof">Thainã</span></td>
+                    <td><span class="materia">Português</span><span class="prof">Tayna</span></td>
+                </tr>
+                <tr>
+                    <td>14:40</td>
+                    <td><span class="materia">Ciências</span><span class="prof">Thainã</span></td>
+                    <td><span class="materia">Inglês</span><span class="prof">Larissa</span></td>
+                    <td><span class="materia">Inglês</span><span class="prof">Larissa</span></td>
+                    <td><span class="materia">Inglês</span><span class="prof">Larissa</span></td>
+                    <td><span class="materia">Arte</span><span class="prof">Thainã</span></td>
+                </tr>
+                <tr class="intervalo">
+                    <td>15:30</td>
+                    <td colspan="5">Intervalo</td>
+                </tr>
+                <tr>
+                    <td>15:50</td>
+                    <td><span class="materia">Português</span><span class="prof">Tayna</span></td>
+                    <td><span class="materia">Laboratório</span><span class="prof">Anna Paula</span></td>
+                    <td><span class="materia">Matemática</span><span class="prof">Thainã</span></td>
+                    <td><span class="materia">Português</span><span class="prof">Tayna</span></td>
+                    <td><span class="materia">Matemática</span><span class="prof">Thainã</span></td>
+                </tr>
+                <tr>
+                    <td>16:40</td>
+                    <td><span class="materia">Português</span><span class="prof">Tayna</span></td>
+                    <td><span class="materia">Matemática</span><span class="prof">Thainã</span></td>
+                    <td><span class="materia">Matemática</span><span class="prof">Thainã</span></td>
+                    <td><span class="materia">Português</span><span class="prof">Tayna</span></td>
+                    <td><span class="materia">Inglês</span><span class="prof">Larissa</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="aviso-mobile">↔ Arraste ver todos os dias</div>
+
+    <footer>
+        
+    </footer>
+
+    <script>
+        const celulasMaterias = document.querySelectorAll('td:not(:first-child)');
+        let filtroAtivo = false;
+
+        celulasMaterias.forEach(celula => {
+            celula.addEventListener('click', function() {
+                if (this.parentElement.classList.contains('intervalo')) return;
+
+                const spanMateria = this.querySelector('.materia');
+                if (!spanMateria) return;
+
+                const nomeMateria = spanMateria.textContent.trim();
+
+                if (filtroAtivo) {
+                    // Verifica se clicou na MESMA matéria para resetar, ou em outra para trocar o filtro
+                    // Aqui optei por: Clicou em qualquer coisa com filtro ativo -> Reseta
+                    resetarFiltro();
+                    
+                    // Se quiser a lógica "Clicar em outra matéria já filtra ela direto", use este bloco comentado abaixo ao invés do resetarFiltro acima:
+                    /*
+                    const materiaAtualAtiva = document.querySelector('td:not(.esmaecido):not(:first-child) .materia').textContent.trim();
+                    if(materiaAtualAtiva === nomeMateria) {
+                        resetarFiltro();
+                    } else {
+                        aplicarFiltro(nomeMateria);
+                    }
+                    */
+
+                } else {
+                    aplicarFiltro(nomeMateria);
+                }
+            });
+        });
+
+        function aplicarFiltro(materiaSelecionada) {
+            celulasMaterias.forEach(celula => {
+                // Pula células de intervalo se por acaso forem selecionadas
+                if (celula.parentElement.classList.contains('intervalo')) return;
+
+                const span = celula.querySelector('.materia');
+                if (!span || span.textContent.trim() !== materiaSelecionada) {
+                    celula.classList.add('esmaecido');
+                } else {
+                    celula.classList.remove('esmaecido');
+                }
+            });
+            filtroAtivo = true;
+        }
+
+        function resetarFiltro() {
+            celulasMaterias.forEach(celula => {
+                celula.classList.remove('esmaecido');
+            });
+            filtroAtivo = false;
+        }
+    </script>
+
+</body>
+</html>
