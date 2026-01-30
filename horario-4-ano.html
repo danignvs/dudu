@@ -32,6 +32,7 @@
             background-color: var(--azul-fundo-pag);
             color: var(--azul-texto);
             margin: 0;
+            padding: 10px; /* Reduzi o padding geral */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -42,41 +43,29 @@
         /* Cabeçalho da Página */
         header {
             background-color: var(--amarelo-destaque);
-            padding: 20px 40px;
-            margin-bottom: 20px;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
             text-align: center;
             width: 100%;
+            box-sizing: border-box; /* Garante que padding não estoure a largura */
         }
 
-        h1 { margin: 0; font-size: 2.5em; color: var(--azul-texto); text-transform: uppercase; line-height: 1.1; }
-        h2 { margin: 5px 0 0 0; font-size: 1.2em; color: var(--laranja-texto); }
+        h1 { margin: 0; font-size: 1.5em; color: var(--azul-texto); text-transform: uppercase; line-height: 1.1; }
+        h2 { margin: 5px 0 0 0; font-size: 1.1em; color: var(--laranja-texto); }
 
-        /* Aviso de rolagem (só aparece no mobile) */
-        .aviso-mobile {
-            display: none;
-            font-size: 0.9em;
-            color: var(--azul-texto);
-            margin: 10px 0;
-            font-weight: bold;
-            opacity: 0.5;
-        }
-
-        /* Container da Tabela com Scroll */
+        /* Container da Tabela */
         .tabela-container {
             width: 100%;
             max-width: 1100px;
-            overflow-x: auto; /* Permite rolagem horizontal */
-            padding-bottom: 20px; /* Espaço para a sombra do hover não cortar */
-            /* Rolagem suave no iOS */
-            -webkit-overflow-scrolling: touch; 
+            /* Removemos o overflow para evitar rolagem, agora queremos que caiba */
         }
 
         table {
             border-collapse: separate;
             border-spacing: 4px;
             background-color: transparent;
-            /* Garante que a tabela tenha um tamanho mínimo para não esmagar o conteúdo */
-            min-width: 800px; 
+            width: 100%; /* Ocupa 100% da tela */
             margin: 0 auto;
         }
 
@@ -88,56 +77,39 @@
         }
 
         th {
-            padding: 5px;
-            font-size: 1.1em;
-            white-space: nowrap; /* Não quebra linha no cabeçalho */
+            padding: 10px;
+            font-size: 1em;
+            border-radius: 5px;
         }
 
         /* Células do Corpo */
         td {
-            padding: 15px;
+            padding: 10px;
             text-align: center;
             vertical-align: middle;
             background-color: var(--branco);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
+            border-radius: 5px;
+            transition: all 0.2s ease;
             cursor: pointer;
-            min-width: 100px; /* Largura mínima para cada aula */
         }
 
-        /* -------------------------------------------------------
-           COLUNA DE HORÁRIO FIXA (STICKY)
-           ------------------------------------------------------- */
-        td:first-child, th:first-child {
-            position: sticky;
-            left: 0;
-            z-index: 20; /* Fica acima das outras células ao rolar */
-        }
-
-        /* Estilo específico da coluna de horário */
+        /* Coluna de Horário */
         td:first-child {
             background-color: var(--amarelo-bg);
             color: var(--laranja-texto);
             font-weight: bold;
             cursor: default;
-            min-width: 60px;
-        }
-
-        /* Correção para o cabeçalho fixo */
-        th:first-child {
-            background-color: var(--azul-cabecalho-tabela);
-            z-index: 21; /* Fica acima de tudo */
         }
 
         /* --- EFEITO DE HOVER --- */
-        td:not(:first-child):not(.esmaecido):hover {
-            background-color: var(--amarelo-bg);
-            z-index: 30; /* Muito alto para ficar acima da coluna fixa se necessário */
+        td:not(:first-child):not(.desabilitado):hover {
+            background-color: var(--amarelo-destaque);
+            z-index: 30;
             position: relative;
         }
 
         /* --- CLASSE "DESABILITADO" --- */
-        .esmaecido {
+        .desabilitado {
             opacity: 0.3;
             filter: grayscale(100%);
             transform: scale(0.95);
@@ -146,21 +118,21 @@
         /* Conteúdo da Célula */
         .materia {
             font-weight: bold;
-            font-size: 1.1em;
+            font-size: 1em;
             display: block;
             margin-bottom: 4px;
             color: var(--azul-texto);
         }
 
         .prof {
-            font-size: 0.75em;
+            font-size: 0.7em;
             text-transform: uppercase;
             font-weight: bold;
             background-color: var(--amarelo-bg);
             padding: 4px 8px;
+            border-radius: 8px;
             color: var(--cinza-texto);
             display: inline-block;
-            white-space: nowrap; /* Evita quebra de linha no nome */
         }
 
         /* Intervalo */
@@ -168,7 +140,6 @@
             background-color: var(--amarelo-destaque) !important;
             color: var(--laranja-texto);
             font-weight: bold;
-            letter-spacing: 2px;
             text-transform: uppercase;
             cursor: default;
         }
@@ -181,31 +152,48 @@
         }
 
         /* -------------------------------------------------------
-           MEDIA QUERIES (Para Celular)
+           MEDIA QUERIES (AJUSTE PARA CELULAR - FIT SCREEN)
            ------------------------------------------------------- */
-        @media (max-width: 768px) {
-            body { padding: 10px; }
+        @media (max-width: 700px) {
             
-            header {
-                padding: 15px;
+            /* Força a tabela a ter layout fixo e respeitar largura da tela */
+            table {
+                table-layout: fixed; 
                 width: 100%;
             }
 
-            h1 { font-size: 1.8em; }
-            h2 { font-size: 1em; }
+            /* Ajuste radical de fontes e padding para caber */
+            th, td {
+                padding: 8px 1px; /* Quase sem padding lateral */
+                font-size: 2.7vw; /* Fonte baseada na largura da tela (fica pequena mas cabe) */
+                height: 50px; /* Altura mínima para ficar tocável */
+            }
 
-            /* Mostra o aviso de arrastar */
-            .aviso-mobile { display: block; }
+            /* Coluna de horário um pouco mais estreita se possível */
+            th:first-child, td:first-child {
+                width: 10%; 
+                font-size: 2.5vw;
+            }
 
-            /* Diminui espaçamento da tabela */
-            table { border-spacing: 2px; }
+            /* Texto da Matéria */
+            .materia {
+                margin-bottom: 2px;
+                line-height: 1;
+                white-space: nowrap;
+            }
 
-            /* Fontes menores na tabela */
-            th { padding: 10px; font-size: 0.9em; }
-            td { padding: 10px 5px; }
+            /* Texto do Professor */
+            .prof {
+                padding: 1px 3px;
+                border-radius: 4px;
+                white-space: nowrap;
+                line-height: 1;
+            }
 
-            .materia { font-size: 0.95em; }
-            .prof { font-size: 0.65em; padding: 2px 5px; }
+            /* Cabeçalho da página menor */
+            h1 { font-size: 1.2em; }
+            h2 { font-size: 0.9em; }
+            
         }
     </style>
 </head>
@@ -220,29 +208,28 @@
         <table>
             <thead>
                 <tr>
-                    <th>Horário</th>
-                    <th>Segunda</th>
-                    <th>Terça</th>
-                    <th>Quarta</th>
-                    <th>Quinta</th>
-                    <th>Sexta</th>
+                    <th>Hora</th> <th>Seg</th>
+                    <th>Ter</th>
+                    <th>Qua</th>
+                    <th>Qui</th>
+                    <th>Sex</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td>13:00</td>
-                    <td><span class="materia">Ed. Física</span><span class="prof">Rafael Bueno</span></td>
+                    <td><span class="materia">Ed. Física</span><span class="prof">Rafael</span></td>
                     <td><span class="materia">História</span><span class="prof">Tayna</span></td>
-                    <td><span class="materia">Socioemocional</span><span class="prof">Tayna</span></td>
+                    <td><span class="materia">Socio Emoc.</span><span class="prof">Tayna</span></td>
                     <td><span class="materia">Matemática</span><span class="prof">Thainã</span></td>
-                    <td><span class="materia">Ed. Física</span><span class="prof">Rafael Bueno</span></td>
+                    <td><span class="materia">Ed. Física</span><span class="prof">Rafael</span></td>
                 </tr>
                 <tr>
                     <td>13:50</td>
                     <td><span class="materia">Ciências</span><span class="prof">Thainã</span></td>
                     <td><span class="materia">História</span><span class="prof">Tayna</span></td>
                     <td><span class="materia">Geografia</span><span class="prof">Tayna</span></td>
-                    <td><span class="materia">Ed. Financeira</span><span class="prof">Thainã</span></td>
+                    <td><span class="materia">Ed. Finan.</span><span class="prof">Thainã</span></td>
                     <td><span class="materia">Português</span><span class="prof">Tayna</span></td>
                 </tr>
                 <tr>
@@ -255,7 +242,7 @@
                 </tr>
                 <tr class="intervalo">
                     <td>15:30</td>
-                    <td colspan="5">Intervalo</td>
+                    <td colspan="5" style="letter-spacing: 1px;">Intervalo</td>
                 </tr>
                 <tr>
                     <td>15:50</td>
@@ -277,8 +264,6 @@
         </table>
     </div>
 
-    <div class="aviso-mobile">↔ Arraste ver todos os dias</div>
-
     <footer>
         
     </footer>
@@ -294,23 +279,11 @@
                 const spanMateria = this.querySelector('.materia');
                 if (!spanMateria) return;
 
+                // Normaliza o nome para comparação (remove espaços extras)
                 const nomeMateria = spanMateria.textContent.trim();
 
                 if (filtroAtivo) {
-                    // Verifica se clicou na MESMA matéria para resetar, ou em outra para trocar o filtro
-                    // Aqui optei por: Clicou em qualquer coisa com filtro ativo -> Reseta
                     resetarFiltro();
-                    
-                    // Se quiser a lógica "Clicar em outra matéria já filtra ela direto", use este bloco comentado abaixo ao invés do resetarFiltro acima:
-                    /*
-                    const materiaAtualAtiva = document.querySelector('td:not(.esmaecido):not(:first-child) .materia').textContent.trim();
-                    if(materiaAtualAtiva === nomeMateria) {
-                        resetarFiltro();
-                    } else {
-                        aplicarFiltro(nomeMateria);
-                    }
-                    */
-
                 } else {
                     aplicarFiltro(nomeMateria);
                 }
@@ -319,14 +292,15 @@
 
         function aplicarFiltro(materiaSelecionada) {
             celulasMaterias.forEach(celula => {
-                // Pula células de intervalo se por acaso forem selecionadas
                 if (celula.parentElement.classList.contains('intervalo')) return;
 
                 const span = celula.querySelector('.materia');
+                // Compara texto. Como abreviei alguns nomes no HTML (ex: Matemática), 
+                // a comparação será exata pelo que está escrito na célula clicada.
                 if (!span || span.textContent.trim() !== materiaSelecionada) {
-                    celula.classList.add('esmaecido');
+                    celula.classList.add('desabilitado');
                 } else {
-                    celula.classList.remove('esmaecido');
+                    celula.classList.remove('desabilitado');
                 }
             });
             filtroAtivo = true;
@@ -334,7 +308,7 @@
 
         function resetarFiltro() {
             celulasMaterias.forEach(celula => {
-                celula.classList.remove('esmaecido');
+                celula.classList.remove('desabilitado');
             });
             filtroAtivo = false;
         }
